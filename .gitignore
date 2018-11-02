@@ -1,0 +1,6 @@
+#ignore images
+*.jpg
+
+#ignore jupiter files
+.DS_Store
+.ipynb_checkpoints/
