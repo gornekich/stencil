@@ -8,3 +8,8 @@ def index(request):
 
 def upload(request):
     return render(request, 'core/upload.html')
+
+
+def process(request):
+    print(request.body)
+    return HttpResponse('hello world')

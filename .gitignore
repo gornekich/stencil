@@ -4,3 +4,6 @@
 #ignore jupiter files
 .DS_Store
 .ipynb_checkpoints/
+
+#ignore frontend files
+node_modules
