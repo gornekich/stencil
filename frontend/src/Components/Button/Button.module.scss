@@ -1,0 +1,57 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 20px;
+  border: 1.5px solid rgba(154, 81, 178, 0.5);
+  background: rgba(154, 81, 178, 0.1);
+  border-radius: 8px;
+  transition-duration: 0.5s;
+  cursor: pointer;
+
+  .content {
+    font-weight: 550;
+  }
+
+  &:hover {
+    background: rgba(154, 81, 178, 0.2);
+    border-color: rgb(154, 81, 178);
+    transition-duration: 0.5s;
+  }
+  &:active {
+    box-shadow: 0px 0px 5px rgb(154, 81, 178);
+    transition-duration: 0;
+  }
+
+  &_success {
+    border-color: rgba(68, 178, 133, 0.5);
+    background: rgba(68, 178, 133, 0.1);
+
+    &:hover {
+      background: rgba(68, 178, 133, 0.2);
+      border-color: rgb(68, 178, 133);
+      transition-duration: 0.5s;
+    }
+    &:active {
+      box-shadow: 0px 0px 5px rgb(68, 178, 133);
+      transition-duration: 0;
+    }
+  }
+
+  &_disabled {
+    background: rgb(230, 230, 230);
+    border-color: rgb(160, 160, 160);
+    color: rgb(88, 88, 88);
+    cursor: default;
+
+    &:hover {
+      background: rgb(230, 230, 230);
+      border-color: rgb(160, 160, 160);
+    }
+    &:active {
+      background: rgb(230, 230, 230);
+      border-color: rgb(160, 160, 160);
+      box-shadow: none;
+    }
+  }
+}

@@ -1,5 +1,11 @@
 #ignore images
 *.jpg
+*.png
+*.jpeg
+
+#ignore pycache
+*.pyc
+*.pyo
 
 #ignore jupiter files
 .DS_Store
