@@ -1,58 +1,41 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
+import { connect } from 'react-redux';
 
 import thematize from 'Lib/thematize';
-import Button from 'Components/Button';
+import { uploadImage, uploadColors, setImage } from 'Actions/AppActionCreators';
 import styles from './ImageLoader.module.scss';
 
 const theme = thematize(styles);
 
+const mapDispatchToProps = dispatch => {
+  return {
+    uploadImage: (image) => { return dispatch(uploadImage(image)); },
+    uploadColors: () => { dispatch(uploadColors()); },
+    setImage: (image) => { dispatch(setImage(image)); }
+  };
+};
+
 class ImageLoader extends Component {
   state = {
-    image: null,
     imageUrl: null
   };
 
   handleChange = event => {
     this.setState({
       imageUrl: URL.createObjectURL(event.target.files[0]),
-      image: event.target.files[0]
     });
+    this.props.setImage(event.target.files[0]);
   };
 
   handleUpload = () => {
     const formData = new FormData();
-
-    formData.append('avatar', this.state.image);
-    fetch('/core/process/?param=file', {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
-      },
-      body: formData
-    })
-      .then(res => res.text())
-      .then(id => {
-        fetch('/core/process/?param=colors', {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-          },
-          body: JSON.stringify({
-            id: id,
-            colors: [
-              [242, 242, 242],
-              [102, 204, 255],
-              [0, 102, 153],
-              [255, 148, 77],
-              [255, 77, 77],
-              [13, 13, 13]
-            ]
-          })
-        });
+    formData.append('image', this.state.image);
+    this.props.uploadImage(formData)
+      .then(() => {
+        this.props.uploadColors();
       })
-      .catch(err => console.log(err));
-  };
+  }
 
   render() {
     return (
@@ -68,7 +51,7 @@ class ImageLoader extends Component {
           <label htmlFor="imageLoader" className={theme('label')}>
             Choose image
           </label>
-          {this.state.image && (
+          {this.state.imageUrl && (
             <div className={theme('image-container')}>
               <img
                 src={this.state.imageUrl}
@@ -77,18 +60,10 @@ class ImageLoader extends Component {
               />
             </div>
           )}
-          {this.state.image && (
-            <Button
-              content="Upload"
-              onClick={this.handleUpload}
-              disabled={this.state.image ? false : true}
-              success
-            />
-          )}
         </div>
       </div>
     );
   }
 }
 
-export default ImageLoader;
+export default connect(null, mapDispatchToProps)(ImageLoader);
