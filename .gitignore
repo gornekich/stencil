@@ -1,6 +1,14 @@
 #ignore images
 *.jpg
+*.png
+*.jpeg
+
+#ignore pycache
+__pycache__
 
 #ignore jupiter files
 .DS_Store
 .ipynb_checkpoints/
+
+#ignore frontend files
+node_modules

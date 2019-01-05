@@ -1,0 +1,14 @@
+.container {
+  position: fixed;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(241, 201, 255);
+  width: 100%;
+
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
