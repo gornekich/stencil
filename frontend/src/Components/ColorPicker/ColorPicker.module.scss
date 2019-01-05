@@ -1,0 +1,14 @@
+$color-sample-size: 120px;
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.color-sample {
+  border-radius: 50%;
+  width: $color-sample-size;
+  height: $color-sample-size;
+  border: 1.5px solid rgb(154, 81, 178);
+}

@@ -4,13 +4,15 @@
 
 .container {
   display: flex;
-  justify-content: space-around;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .image-container {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
 }
 
 .image {
