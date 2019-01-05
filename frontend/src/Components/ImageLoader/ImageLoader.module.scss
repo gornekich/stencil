@@ -1,0 +1,42 @@
+.input-hidden {
+  display: none;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.image {
+  height: 250px;
+  border: 1px solid rgb(241, 201, 255);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 20px;
+  border: 1.5px solid rgba(154, 81, 178, 0.5);
+  background: rgba(154, 81, 178, 0.1);
+  border-radius: 8px;
+  transition-duration: 0.5s;
+  font-weight: 550;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(154, 81, 178, 0.2);
+    border-color: rgb(154, 81, 178);
+    transition-duration: 0.5s;
+  }
+  &:active {
+    box-shadow: 0px 0px 5px rgb(154, 81, 178);
+    transition-duration: 0;
+  }
+}
