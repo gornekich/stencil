@@ -29,7 +29,7 @@ def process(request):
         OUTPUT_DIR = os.path.join(FILE_DIR, "output")
         # Processing file upload
         if request.GET.get("param") == 'file':
-            uploaded_image = request.FILES['avatar']
+            uploaded_image = request.FILES['image']
             fs = FileSystemStorage(FILE_DIR)
             fs.save('input.jpg', uploaded_image)
             return HttpResponse(str(cur_id.current_id))

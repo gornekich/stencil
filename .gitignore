@@ -12,3 +12,12 @@ __pycache__
 
 #ignore frontend files
 node_modules
+
+#ignore js files
+*.js
+
+#ignore css files
+*.css
+
+#ignore map files
+*.map
