@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
 import thematize from 'Lib/thematize';
-import { uploadImage, uploadColors } from 'Actions/AppActionCreators';
+import { uploadImageAndColors } from 'Actions/AppActionCreators';
 import Header from 'Components/Header';
 import Button from 'Components/Button';
 import ImageLoader from 'Components/ImageLoader';
@@ -15,29 +15,26 @@ const theme = thematize(styles);
 
 const mapStateToProps = ({ colors, app }) => {
   return {
-    colors,
-    app
+    colors: colors.selectedColors,
+    image: app.image
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    uploadImage: (image) => { return dispatch(uploadImage(image)); },
-    uploadColors: () => { dispatch(uploadColors()); },
+    uploadImageAndColors: data => { return dispatch(uploadImageAndColors(data)); },
   }
 }
 
-const Layout = ({ colors, app, uploadImage, uploadColors }) => {
+const Layout = ({ colors, image, uploadImageAndColors }) => {
   const handleUpload = () => {
     const formData = new FormData();
-    formData.append('image', app.image);
-
-    uploadImage(formData)
-      .then(() => {
-        uploadColors();
-      })
+    formData.append('image', image);
+    formData.append('colors', JSON.stringify(colors));
+    console.log(colors);
+    uploadImageAndColors(formData);
   }
-  const isUploadButtonDisabled = !(colors.selectedColors.length > 1 && app.image);
+  const isUploadButtonDisabled = !(colors.length > 1 && image);
   return (
     <div>
       <Header title={'Awesome Stencil'} />

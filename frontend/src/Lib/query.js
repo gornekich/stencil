@@ -7,7 +7,7 @@ export const post = (url, data, headers={}) => {
     method: 'POST',
     headers: {
       ...headers,
-      'X-CSRFToken': csrfToken
+      'X-CSRFToken': csrfToken,
     },
     body: data
   });

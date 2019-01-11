@@ -30,69 +30,27 @@ export const setId = id => {
   };
 };
 
-export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
-export const UPLOAD_IMAGE_SUCCESS = 'UPLOAD_IMAGE_SUCCESS';
-export const UPLOAD_IMAGE_ERROR = 'UPLOAD_IMAGE_ERROR';
-export const uploadImage = image => {
+export const UPLOAD_IMAGE_AND_COLORS = 'UPLOAD_IMAGE';
+export const UPLOAD_IMAGE_AND_COLORS_SUCCESS = 'UPLOAD_IMAGE_SUCCESS';
+export const UPLOAD_IMAGE_AND_COLORS_ERROR = 'UPLOAD_IMAGE_ERROR';
+export const uploadImageAndColors = data => {
   return dispatch => {
     dispatch({
-      type: UPLOAD_IMAGE
+      type: UPLOAD_IMAGE_AND_COLORS
     });
 
-    return post('/core/process/?param=file', image)
+    post('/core/process/?param=file', data)
       .then(response => response.text())
       .then(id => {
         dispatch(setId(id));
         dispatch({
-          type: UPLOAD_IMAGE_SUCCESS
+          type: UPLOAD_IMAGE_AND_COLORS_SUCCESS
         });
-        return null;
       })
       .catch(error => {
         console.log('error');
         dispatch({
-          type: UPLOAD_IMAGE_ERROR,
-          payload: error
-        });
-      });
-  };
-};
-
-export const UPLOAD_COLORS = 'UPLOAD_COLORS';
-export const UPLOAD_COLORS_SUCCESS = 'UPLOAD_COLORS_SUCCESS';
-export const UPLOAD_COLORS_ERROR = 'UPLOAD_COLORS_ERROR';
-export const uploadColors = () => {
-  return (dispatch, getState) => {
-    dispatch({
-      type: UPLOAD_COLORS
-    });
-
-    if (!getState().id) {
-      dispatch({
-        type: UPLOAD_COLORS_ERROR
-      });
-      return;
-    }
-    const colorsAndId = JSON.stringify({
-      id: getState().id,
-      colors: getState().colors.selectedColors
-    });
-
-    post('/core/process/?param=colors', colorsAndId)
-      .then(response => {
-        if (response.status == 200) {
-          dispatch({
-            type: UPLOAD_COLORS_SUCCESS
-          });
-        } else {
-          dispatch({
-            type: UPLOAD_COLORS_ERROR
-          });
-        }
-      })
-      .catch(error => {
-        dispatch({
-          type: UPLOAD_COLORS_ERROR,
+          type: UPLOAD_IMAGE_AND_COLORS_ERROR,
           payload: error
         });
       });

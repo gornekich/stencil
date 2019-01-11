@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
-import Cookies from 'js-cookie';
 import { connect } from 'react-redux';
 
 import thematize from 'Lib/thematize';
-import { uploadImage, uploadColors, setImage } from 'Actions/AppActionCreators';
+import { setImage } from 'Actions/AppActionCreators';
 import styles from './ImageLoader.module.scss';
 
 const theme = thematize(styles);
 
 const mapDispatchToProps = dispatch => {
   return {
-    uploadImage: (image) => { return dispatch(uploadImage(image)); },
-    uploadColors: () => { dispatch(uploadColors()); },
-    setImage: (image) => { dispatch(setImage(image)); }
+    setImage: image => {
+      dispatch(setImage(image));
+    }
   };
 };
 
@@ -23,7 +22,7 @@ class ImageLoader extends Component {
 
   handleChange = event => {
     this.setState({
-      imageUrl: URL.createObjectURL(event.target.files[0]),
+      imageUrl: URL.createObjectURL(event.target.files[0])
     });
     this.props.setImage(event.target.files[0]);
   };
@@ -31,11 +30,10 @@ class ImageLoader extends Component {
   handleUpload = () => {
     const formData = new FormData();
     formData.append('image', this.state.image);
-    this.props.uploadImage(formData)
-      .then(() => {
-        this.props.uploadColors();
-      })
-  }
+    this.props.uploadImage(formData).then(() => {
+      this.props.uploadColors();
+    });
+  };
 
   render() {
     return (
@@ -66,4 +64,7 @@ class ImageLoader extends Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(ImageLoader);
+export default connect(
+  null,
+  mapDispatchToProps
+)(ImageLoader);
