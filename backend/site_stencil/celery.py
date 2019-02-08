@@ -5,9 +5,9 @@ from celery import Celery
 from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nome_do_proj.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'site_stencil.settings')
 
-app = Celery('nome_do_proj')
+app = Celery('site_stencil')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.

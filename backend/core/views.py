@@ -5,55 +5,67 @@ import json
 import os
 
 from django import forms
-from .models import ID_Manager
-from .stencil import *
-
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    file = forms.FileField()
+from .models import SiteCounter, Stencil
+from .stencil_algorythm import *
+from .tasks import find_color_edges
 
 def index(request):
     return render(request, 'core/basic.html')
 
 
 def upload(request):
+    # Increment upload counter and save to database
+    cnt = SiteCounter.objects.get(id=0)
+    cnt.upload_cnt += 1
+    cnt.save()
     return render(request, 'core/upload.html')
 
 
 def process(request):
     if request.method == 'POST' :
-        cur_id = ID_Manager.objects.get(id=0)
+        # Increment process counter and save to database
+        cnt = SiteCounter.objects.get(id=0)
+        stencil_id = cnt.process_cnt
+        cnt.process_cnt += 1
+        cnt.save()
+        # Creating dictionary for database
+        stencil_info = {'id': stencil_id}
+
+        # Assign new directories for input/output files
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         MEDIA_DIR = os.path.join(BASE_DIR, "media")
-        FILE_DIR = os.path.join(MEDIA_DIR, str(cur_id.current_id))
-        OUTPUT_DIR = os.path.join(FILE_DIR, "output")
-        # Processing file upload
-        if request.GET.get("param") == 'file':
-            uploaded_image = request.FILES['image']
-            fs = FileSystemStorage(FILE_DIR)
-            fs.save('input.jpg', uploaded_image)
-            return HttpResponse(str(cur_id.current_id))
+        FILE_DIR = os.path.join(MEDIA_DIR, str(stencil_id))
+        stencil_info['directory'] = FILE_DIR
+        
+        # Processing upload file
+        uploaded_image = request.FILES['image']
+        fs = FileSystemStorage(FILE_DIR)
+        fs.save(uploaded_image.name, uploaded_image)
+        stencil_info['img'] = uploaded_image.name
+        stencil_info['stencil'] = 'stencil.jpg'
 
         #Processing colors and start algorythm
-        if request.GET.get("param") == 'colors':
-            
-            #Parse json file
-            body_unicode = request.body.decode('utf-8')
-            body = json.loads(body_unicode)
-            content = body['id']
-            print(body['colors'])
 
-            #Open input file
-            im = Image.open(FILE_DIR + '/input.jpg')
-            os.mkdir(OUTPUT_DIR)
-            
-            #Start algorythm and save output
-            edges, merged_colors, merged_colors_smooth, separate_clrs_pics = find_color_edges(im, target_colors)
-            for i in range(len(edges)):
-                edges[i].save(OUTPUT_DIR + '/' + str(i) + '.jpg', "JPEG")
-            merged_colors_smooth.save(OUTPUT_DIR + '/' + 'result.jpg')
+        #Parse input colors json file
+        inp_clrs = json.loads(request.POST['colors'])
+        colors = []
+        for i in range(len(inp_clrs)):
+            colors.append((inp_clrs[i]['r'], inp_clrs[i]['g'],
+                           inp_clrs[i]['b']))
+        stencil_info['colors'] = colors
+        print(colors)
+        stencil_info['layers'] = len(colors)
 
-            cur_id.current_id += 1
-            cur_id.save()
-            return HttpResponse('Everything is fine, I will just process it')
+        # Pack stencil information into json format
+        stencil_json = json.dumps(stencil_info)
+
+        # Create new Stencil object in database
+        sten = Stencil()
+        sten.fill_info(stencil_json)
+        sten.save()
+
+        # Start algorythm
+        find_color_edges.delay(stencil_info)
+
+        return HttpResponse(stencil_id)
     return HttpResponse('Wrong parameter')
