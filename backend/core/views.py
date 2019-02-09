@@ -69,3 +69,12 @@ def process(request):
 
         return HttpResponse(stencil_id)
     return HttpResponse('Wrong parameter')
+
+def result(request):
+    return render(request, 'core/basic.html')
+
+
+
+
+
+
