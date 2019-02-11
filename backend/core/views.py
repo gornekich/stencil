@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.files.storage import FileSystemStorage
 import json
 import os
@@ -70,8 +70,23 @@ def process(request):
         return HttpResponse(stencil_id)
     return HttpResponse('Wrong parameter')
 
-def result(request):
-    return render(request, 'core/basic.html')
+def result(request, stencil_id):
+    context = {}
+    print(stencil_id)
+    try:
+        sten = Stencil.objects.get(stencil_id=stencil_id)
+    except Stencil.DoesNotExist:
+        raise Http404("Stencil does not exist")
+
+    media_url = 'core/media/' + str(sten.stencil_id) + '/'
+    context['orig_url'] = media_url + sten.img_name
+    context['stencil_url'] = media_url + sten.stencil_name
+    edges_url = []
+    for i in range(sten.layers):
+        edges_url.append(media_url + str(i) + '.jpg')
+    context['edges_url'] = edges_url
+    print(context)
+    return render(request, 'core/result.html', context)
 
 
 

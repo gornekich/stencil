@@ -14,7 +14,8 @@ def find_color_edges(stencil_info):
     colors = read_colors_from_json(stencil_info['colors'])
 
     merged_colors = split_img_in_colors(im, colors)
-    merged_colors_smooth = merged_colors.filter(ImageFilter.ModeFilter(size = 20))
+    merged_colors_smooth = merged_colors
+    #merged_colors_smooth = merged_colors.filter(ImageFilter.ModeFilter(size = 20))
     separate_clrs_pics = get_separate_colors(merged_colors_smooth, colors)
     edges = get_color_edge(separate_clrs_pics, (255, 0, 0))
     for i in range(len(edges)):
