@@ -31,7 +31,6 @@ const Upload = ({ colors, image, uploadImageAndColors }) => {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('colors', JSON.stringify(colors));
-    console.log(colors);
     uploadImageAndColors(formData);
   }
   const isUploadButtonDisabled = !(colors.length > 1 && image);

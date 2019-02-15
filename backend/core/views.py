@@ -2,12 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.core.files.storage import FileSystemStorage
 import json
+from celery.result import AsyncResult
 import os
 
 from django import forms
 from .models import SiteCounter, Stencil
 from .stencil_algorythm import *
 from .tasks import find_color_edges
+
 
 def index(request):
     return render(request, 'core/basic.html')
@@ -22,7 +24,7 @@ def upload(request):
 
 
 def process(request):
-    if request.method == 'POST' :
+    if request.method == 'POST':
         # Increment process counter and save to database
         cnt = SiteCounter.objects.get(id=0)
         stencil_id = cnt.process_cnt
@@ -36,7 +38,7 @@ def process(request):
         MEDIA_DIR = os.path.join(BASE_DIR, "media")
         FILE_DIR = os.path.join(MEDIA_DIR, str(stencil_id))
         stencil_info['directory'] = FILE_DIR
-        
+
         # Processing upload file
         uploaded_image = request.FILES['image']
         fs = FileSystemStorage(FILE_DIR)
@@ -44,9 +46,9 @@ def process(request):
         stencil_info['img'] = uploaded_image.name
         stencil_info['stencil'] = 'stencil.jpg'
 
-        #Processing colors and start algorythm
+        # Processing colors and start algorythm
 
-        #Parse input colors json file
+        # Parse input colors json file
         inp_clrs = json.loads(request.POST['colors'])
         colors = []
         for i in range(len(inp_clrs)):
@@ -65,18 +67,18 @@ def process(request):
         sten.save()
 
         # Start algorythm
+        info = {}
         task_id = find_color_edges.delay(stencil_info)
-        info['task_id'] = task_id
+        info['task_id'] = task_id.id
         info['stencil_id'] = stencil_id
         info_json = json.dumps(info)
-        print(info_json)
 
         return HttpResponse(info_json)
     return HttpResponse('Wrong parameter')
 
 
 def result(request, stencil_id):
-    if request.method == 'POST' :
+    if request.method == 'POST':
         context = {}
         print(stencil_id)
         try:
@@ -84,8 +86,9 @@ def result(request, stencil_id):
         except Stencil.DoesNotExist:
             raise Http404("Stencil does not exist")
 
-        task_id = request.POST['task_id']
-        state = AsyncResult(task_id);
+        task_id = json.loads(request.body)['task_id']
+        print(task_id)
+        state = AsyncResult(task_id)
         if state.ready():
             sten.ready = 1
             sten.save()
@@ -100,7 +103,7 @@ def result(request, stencil_id):
             return render(request, 'core/result.html', context)
         else:
             return HttpResponse(0)
-    
+
     if request.method == 'GET':
         try:
             sten = Stencil.objects.get(stencil_id=stencil_id)
@@ -109,7 +112,7 @@ def result(request, stencil_id):
 
         if sten.ready == 1:
             for i in range(sten.layers):
-                    edges_url.append(media_url + str(i) + '.jpg')
+                edges_url.append(media_url + str(i) + '.jpg')
             context['edges_url'] = edges_url
             print(context)
             return render(request, 'core/result.html', context)

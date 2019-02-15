@@ -3,18 +3,15 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-
+import { Switch, Route } from 'react-router-dom';
 import reducer from 'Reducers/CombineReducers';
-import Header from 'Components/Header';
-import ImageLoader from 'Components/ImageLoader';
-import Button from 'Components/Button';
-import Layout from 'Components/Upload/Layout';
+import Upload from 'Components/Upload';
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 
 const Test = () => (
   <Provider store={store}>
-    <Layout />
+      <Upload />
   </Provider>
 );
 

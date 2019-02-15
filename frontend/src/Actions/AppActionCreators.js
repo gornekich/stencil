@@ -20,13 +20,36 @@ export const addColor = (r, g, b, a) => {
   };
 };
 
-export const SET_ID = 'SET_ID';
-export const setId = id => {
+export const SET_USER_ID = 'SET_USER_ID';
+export const setUserId = id => {
   return dispatch => {
     dispatch({
-      type: SET_ID,
+      type: SET_USER_ID,
       payload: id
     });
+  };
+};
+
+export const SET_TASK_ID = 'SET_TASK_ID';
+export const setTaskId = id => {
+  return dispatch => {
+    dispatch({
+      type: SET_TASK_ID,
+      payload: id
+    });
+  };
+};
+
+export const PROCESSING_IMAGE = 'PROCESSING_IMAGE';
+export const PROCESSING_IMAGE_SUCCESS = 'PROCESSING_IMAGE_SUCCESS';
+export const PROCESSING_IMAGE_ERROR = 'PROCESSING_IMAGE_ERROR';
+export const pingServer = () => {
+  return (dispatch, getState) => {
+    const userId = getState().app.userId;
+    const taskId = getState().app.taskId;
+    post(`/result/${userId}/`, JSON.stringify({ task_id: taskId }))
+      .then(res => res.text())
+      .then(res => console.log(res));
   };
 };
 
@@ -38,17 +61,17 @@ export const uploadImageAndColors = data => {
     dispatch({
       type: UPLOAD_IMAGE_AND_COLORS
     });
-
     post('/process/', data)
-      .then(response => response.text())
-      .then(id => {
-        dispatch(setId(id));
+      .then(response => response.json())
+      .then(response => {
+        dispatch(setUserId(response.stencil_id));
+        dispatch(setTaskId(response.task_id));
         dispatch({
           type: UPLOAD_IMAGE_AND_COLORS_SUCCESS
         });
+        setInterval(() => dispatch(pingServer()), 3000);
       })
       .catch(error => {
-        console.log('error');
         dispatch({
           type: UPLOAD_IMAGE_AND_COLORS_ERROR,
           payload: error
