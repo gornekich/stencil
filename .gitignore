@@ -5,6 +5,7 @@
 
 #ignore pycache
 __pycache__
+venv/
 
 #ignore jupiter files
 .DS_Store
@@ -14,10 +15,11 @@ __pycache__
 node_modules
 
 #ignore js files
-*.js
+#*.js
 
 #ignore css files
-*.css
+#*.css
 
 #ignore map files
-*.map
+#*.map
+

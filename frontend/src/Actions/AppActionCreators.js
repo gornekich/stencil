@@ -39,7 +39,7 @@ export const uploadImageAndColors = data => {
       type: UPLOAD_IMAGE_AND_COLORS
     });
 
-    post('/core/process/?param=file', data)
+    post('/process/', data)
       .then(response => response.text())
       .then(id => {
         dispatch(setId(id));
