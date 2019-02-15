@@ -53,7 +53,7 @@ class ImageLoader extends Component {
             <div className={theme('image-container')}>
               <img
                 src={this.state.imageUrl}
-                alt="failed to render image"
+                alt="failed to load"
                 className={theme('image')}
               />
             </div>

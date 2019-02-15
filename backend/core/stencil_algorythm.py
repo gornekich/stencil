@@ -1,4 +1,5 @@
-import glob, os
+import glob
+import os
 import math
 from PIL import Image
 from PIL import ImageFilter
@@ -7,14 +8,17 @@ from PIL import PSDraw
 from PIL import ImageFilter
 import numpy as np
 
+
 def pix_distance(x, y):
-    return (pow((x[0]-y[0]), 2) + pow((x[1]-y[1]), 2) + pow((x[2]-y[2]), 2))
+    return pow((x[0]-y[0]), 2) + pow((x[1]-y[1]), 2) + pow((x[2]-y[2]), 2)
+
 
 def find_proper_pixel(pixel, target_pixels):
     dist = []
     for pix in target_pixels:
         dist.append(pix_distance(pixel, pix))
     return dist.index(min(dist))
+
 
 def split_img_in_colors(im, target_colors):
     data = im.getdata()
@@ -27,10 +31,11 @@ def split_img_in_colors(im, target_colors):
     out.putdata(out_data)
     return out
 
+
 def get_separate_colors(im, target_colors):
     data = im.getdata()
-    out_data = [[]];
-    out = [[]];
+    out_data = [[]]
+    out = [[]]
     for i in range(len(target_colors) - 1):
         out_data.append([])
         out.append([])
@@ -41,11 +46,12 @@ def get_separate_colors(im, target_colors):
             if target_colors[i] == max_pix:
                 out_data[i].append(max_pix)
             else:
-                out_data[i].append((255,255,255))
-    for i in range(0, len(target_colors)):        
+                out_data[i].append((255, 255, 255))
+    for i in range(0, len(target_colors)):
         out[i] = Image.new("RGB", im.size)
         out[i].putdata(out_data[i])
     return out
+
 
 def get_color_edge(im, rgb):
     out_im = []
@@ -54,10 +60,10 @@ def get_color_edge(im, rgb):
         data = edge.getdata()
         out_data = []
         for pix in data:
-            if pix_distance(pix, (0,0,0)) > 10 :
+            if pix_distance(pix, (0, 0, 0)) > 10:
                 out_data.append(rgb)
             else:
-                out_data.append((255,255,255))
+                out_data.append((255, 255, 255))
         out = Image.new("RGB", im[i].size)
         out.putdata(out_data)
         out_im.append(out)
@@ -70,10 +76,12 @@ def find_pix_inside(contour):
     inside_pix = []
     while find_point == 0 and i < len(contour):
         base_point = contour[i]
-        same_x = [p for p in contour if p[0] == base_point[0] and p[1] != base_point[1]]
+        same_x = [p for p in contour if p[0] ==
+                  base_point[0] and p[1] != base_point[1]]
         if len(same_x) != 1:
             i += 1
         else:
-            inside_pix = [int(same_x[0][0]), int((same_x[0][1] + base_point[1])/2)]
+            inside_pix = [int(same_x[0][0]), int(
+                (same_x[0][1] + base_point[1])/2)]
             find_point = 1
     return inside_pix

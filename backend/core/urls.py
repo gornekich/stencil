@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('upload/', views.upload, name='upload'),
     path('process/', views.process, name='process'),
-    path('result/<int:stencil_id>', views.result, name='result'),
+    path('result/<int:stencil_id>/', views.result, name='result'),
 ]
 
 if settings.DEBUG:
