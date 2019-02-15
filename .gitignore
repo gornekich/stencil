@@ -3,6 +3,10 @@
 *.png
 *.jpeg
 
+#ignore database
+db.sqlite3
+core/migrations/*
+
 #ignore pycache
 __pycache__
 venv/

@@ -23,6 +23,7 @@ class Stencil(models.Model):
     img_name = models.CharField(max_length = 20)
     stencil_name = models.CharField(max_length = 20)
     layers = models.IntegerField(default = 2)
+    ready = models.IntegerField(default=0)
     
     # Fill with input json format
     def fill_info(self, stencil_info = ''):
