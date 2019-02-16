@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.core.files.storage import FileSystemStorage
+from django.views.decorators.csrf import csrf_exempt
 import json
 from celery.result import AsyncResult
 import os
@@ -22,7 +23,7 @@ def upload(request):
     cnt.save()
     return render(request, 'core/upload.html')
 
-
+@csrf_exempt 
 def process(request):
     if request.method == 'POST':
         # Increment process counter and save to database
@@ -77,9 +78,10 @@ def process(request):
     return HttpResponse('Wrong parameter')
 
 
+@csrf_exempt 
 def result(request, stencil_id):
+    context = {}
     if request.method == 'POST':
-        context = {}
         print(stencil_id)
         try:
             sten = Stencil.objects.get(stencil_id=stencil_id)
@@ -89,6 +91,7 @@ def result(request, stencil_id):
         task_id = json.loads(request.body)['task_id']
         print(task_id)
         state = AsyncResult(task_id)
+        print(state.ready())
         if state.ready():
             sten.ready = 1
             sten.save()
@@ -99,8 +102,7 @@ def result(request, stencil_id):
             for i in range(sten.layers):
                 edges_url.append(media_url + str(i) + '.jpg')
             context['edges_url'] = edges_url
-            print(context)
-            return render(request, 'core/result.html', context)
+            return HttpResponse(1)
         else:
             return HttpResponse(0)
 
@@ -110,6 +112,11 @@ def result(request, stencil_id):
         except Stencil.DoesNotExist:
             raise Http404("Stencil does not exist")
 
+        print(sten.ready)
+        media_url = 'media/' + str(sten.stencil_id) + '/'
+        context['orig_url'] = media_url + sten.img_name
+        context['stencil_url'] = media_url + sten.stencil_name
+        edges_url = []
         if sten.ready == 1:
             for i in range(sten.layers):
                 edges_url.append(media_url + str(i) + '.jpg')

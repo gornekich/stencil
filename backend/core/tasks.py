@@ -2,6 +2,9 @@ from __future__ import absolute_import
 from celery import shared_task
 from .stencil_algorythm import *
 
+from celery import Celery
+app = Celery('site_stencil', backend='amqp', broker='amqp://guest:guest@localhost:5672//')
+
 def read_colors_from_json(color_list):
     color_sets = []
     for pix in color_list:
@@ -22,3 +25,7 @@ def find_color_edges(stencil_info):
         edges[i].save(stencil_info['directory'] + '/' + str(i) + '.jpg', "JPEG")
         merged_colors_smooth.save(stencil_info['directory'] + '/' + stencil_info['stencil'])
     return stencil_info['id']
+
+@shared_task # Make asynchronous function
+def add(a,b):
+    return a+b

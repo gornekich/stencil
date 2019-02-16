@@ -49,7 +49,12 @@ export const pingServer = () => {
     const taskId = getState().app.taskId;
     post(`/result/${userId}/`, JSON.stringify({ task_id: taskId }))
       .then(res => res.text())
-      .then(res => console.log(res));
+      .then(res => {
+        console.log(res);
+        if (res === '1') {
+          window.location = `http://localhost:8000/result/${userId}`;
+        }
+      })
   };
 };
 
